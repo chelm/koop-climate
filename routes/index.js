@@ -1,53 +1,31 @@
-// Defines the routes and params name that will be passed in req.params 
 module.exports = {
-  
-  'get /sample/': {
-    controller: 'sample',
-    action: 'index'
+  'get /climate': {
+    controller: 'climate',
+    action: 'list'
   },
 
-  'get /sample': {
-    controller: 'sample',
-    action: 'index'
+  'get /climate/:type': {
+    controller: 'climate',
+    action: 'find'
   },
 
-  'get /sample/:id.:format': {
-    controller: 'sample',
-    action: 'getRepo'
+  'get /climate/:type/FeatureServer/:layer/:method': {
+    controller: 'climate',
+    action: 'featureserver'
   },
 
-  'get /sample/:id': {
-    controller: 'sample',
-    action: 'getRepo'
+  'get /climate/:type/FeatureServer/:layer': {
+    controller: 'climate',
+    action: 'featureserver'
   },
 
-  'get /sample/:id/preview': {
-    controller: 'sample',
-    action: 'preview'
+  'get /climate/:type/FeatureServer': {
+    controller: 'climate',
+    action: 'featureserver'
   },
 
-  'get /sample/:id/FeatureServer': {
-    controller: 'sample',
-    action: 'featureservice'
-  },
-
-  'get /sample/:id/FeatureServer/:layer': {
-    controller: 'sample',
-    action: 'featureservice'
-  },
-
-  'get /sample/:id/FeatureServer/:layer/:method': {
-    controller: 'sample',
-    action: 'featureservice'
-  },
-
-  'get /sample/:id/thumbnail' : {
-    controller  : 'sample',
-    action: 'thumbnail'
-  },
-
-  'get /sample/:id/tiles/:z/:x/:y.:format': { 
-    controller : 'sample',
+  'get /climate/:type/tiles/:z/:x/:y.:format': {
+    controller : 'climate',
     action: 'tiles'
   }
 

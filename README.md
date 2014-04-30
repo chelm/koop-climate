@@ -1,6 +1,6 @@
-# koop-sample-provider 
+# koop-climate 
 
-## A simple provider for Koop
+## An experimental climate data provider for Koop
 
   ```
     git clone 

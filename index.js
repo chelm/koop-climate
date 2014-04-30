@@ -1,4 +1,4 @@
-exports.name = 'Github';
+exports.name = 'Climate';
 exports.controller = require('./controller');
 exports.routes = require('./routes');
-exports.model = require('./models/Github.js');  
+exports.model = require('./models/Climate.js');  

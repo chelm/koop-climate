@@ -1,63 +1,56 @@
+
 var extend = require('node.extend'),
-  crypto = require('crypto'),
   fs = require('fs');
 
-// inherit from base controller (global via koop-server)
-var Controller = extend( {}, BaseController );
+var sm = require('sphericalmercator'),
+  merc = new sm({size:256});
 
-// general helper for not found repos
-Controller.notFound = function(req, res){
-  res.send('A useful error for missing data', 404);
-};
+// inherit from base controller
+var Controller = extend({
+  serviceName: 'climate',
 
+  list: function(req, res){
+    res.json( { types: ['temperature']} );
+  }, 
 
-// general helper for error'd requests
-Controller.Error = function(req, res){
-  res.send('Another useful error', 500);
-};
-
-
-// 
-Controller.get = function(req, res){
-    var key = ['sample'];
-    Sample.find(req.params.id, req.query, function(err, data){
-      if (err){
-        res.send(err, 500);
+  find: function(req, res){
+    Climate.find(req.params.type, req.query, function(err, data){
+      if (err) {
+        res.send( err, 404);
       } else {
         res.json( data );
       }
     });
-};
+  },
 
-Controller.featureservice = function(req, res){
-    var callback = req.query.callback, self = this;
+  featureserver: function( req, res ){
+    var callback = req.query.callback;
     delete req.query.callback;
 
-    Sample.find(req.params.id, req.query, function(err, data){
+    Climate.find(req.params.type, function(err, geojson){
       if (err) {
-        res.send(err, 500);
+        res.send( err, 500);
       } else {
-        delete req.query.geometry;
-        Controller._processFeatureServer( req, res, err, data, callback);
+        // Get the item 
+        // pass to the shared logic for FeatureService routing
+        Controller._processFeatureServer( req, res, err, geojson, callback);
       }
     });
-};
+  },
 
-Controller.tiles = function( req, res ){
+  tiles: function( req, res ){
     var callback = req.query.callback;
     delete req.query.callback;
     
-    var key,
-      layer = req.params.layer || 0;
+    var type = req.params.type;
+    req.params.key = type;
 
     var _send = function( err, data ){
-        req.params.key = key + ':' + layer;
         if (req.query.style){
           req.params.style = req.query.style;
         }
-        Tiles.get( req.params, data[ layer ], function(err, tile){
+        Tiles.get( req.params, data[0], function(err, tile){
           if ( req.params.format == 'png'){
-            //res.contentType('image/png');
             res.sendfile( tile );
           } else {
             if ( callback ){
@@ -71,7 +64,6 @@ Controller.tiles = function( req, res ){
 
     // build the geometry from z,x,y
     var bounds = merc.bbox( req.params.x, req.params.y, req.params.z );
-
     req.query.geometry = {
         xmin: bounds[0],
         ymin: bounds[1],
@@ -94,28 +86,18 @@ Controller.tiles = function( req, res ){
       }
     };
 
-    Sample.find(req.params.id, req.query, function(err, data){
-      if (err) {
-        res.send(err, 500);
-      } else {
-        delete req.query.geometry;
-        Controller._processFeatureServer( req, res, err, data, callback);
-      }
-
-      key = ['sample', req.params.id].join(':');
       var file = config.data_dir + 'tiles/';
-        file += key + ':' + layer + '/' + req.params.format;
+        file += type + '/' + req.params.format;
         file += '/' + req.params.z + '/' + req.params.x + '/' + req.params.y + '.' + req.params.format;
-      
-      if ( !fs.existsSync( file ) ) {
-        Sample.find(req.params.id, req.query, _send );
+     
+      if ( fs.existsSync( file ) ) {
+        _sendImmediate( file );
       } else {
-        _sendImmediate(file);
+        Climate.find( type, req.query, _send );
       }
-    });
+  }
 
-};
 
+}, BaseController);
 
 module.exports = Controller;
-
