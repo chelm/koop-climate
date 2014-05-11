@@ -1,7 +1,7 @@
 {
-  "name": "koop-sample",
+  "name": "koop-climate",
   "version": "0.0.1",
-  "description": "A sample provider for koop ",
+  "description": "A climate data provider for koop ",
   "main": "index.js",
   "directories": {
     "test": "test"
