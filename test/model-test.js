@@ -7,7 +7,7 @@ global.config = config;
 var id = 'id';
 
 before(function (done) {
-  global['Sample'] = require('../models/Sample.js');
+  global.Sample = require('../models/Sample.js');
   done();
 });
 

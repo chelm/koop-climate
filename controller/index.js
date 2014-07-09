@@ -56,7 +56,11 @@ var Controller = extend({
             if ( callback ){
               res.send( callback + '(' + JSON.stringify( tile ) + ')' );
             } else {
-              res.json( tile );
+              if (typeof tile == 'string'){
+                res.sendfile( tile );
+              } else {
+                res.json( tile );
+              }
             }
           }
         });
