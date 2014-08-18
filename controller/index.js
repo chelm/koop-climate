@@ -1,19 +1,20 @@
 
-var extend = require('node.extend'),
-  fs = require('fs');
+var fs = require('fs');
 
 var sm = require('sphericalmercator'),
   merc = new sm({size:256});
 
 // inherit from base controller
-var Controller = extend({
-  serviceName: 'climate',
+// params: 
+//  - koop, an instance of koop for access to shared code
+//  - Climate, the provider model that is passed in via the koop-server/index.js:register method
+var Controller = function( Climate ){
 
-  list: function(req, res){
+  this.list = function(req, res){
     res.json( { types: ['temperature']} );
-  }, 
+  };
 
-  find: function(req, res){
+  this.find = function(req, res){
     Climate.find(req.params.type, req.query, function(err, data){
       if (err) {
         res.send( err, 404);
@@ -21,9 +22,9 @@ var Controller = extend({
         res.json( data );
       }
     });
-  },
+  };
 
-  featureserver: function( req, res ){
+  this.featureserver = function( req, res ){
     var callback = req.query.callback;
     delete req.query.callback;
 
@@ -33,12 +34,12 @@ var Controller = extend({
       } else {
         // Get the item 
         // pass to the shared logic for FeatureService routing
-        Controller._processFeatureServer( req, res, err, geojson, callback);
+        BaseController._processFeatureServer( req, res, err, geojson, callback);
       }
     });
-  },
+  };
 
-  tiles: function( req, res ){
+  this.tiles = function( req, res ){
     var callback = req.query.callback;
     delete req.query.callback;
     
@@ -49,7 +50,7 @@ var Controller = extend({
         if (req.query.style){
           req.params.style = req.query.style;
         }
-        Tiles.get( req.params, data[0], function(err, tile){
+        Climate.getTile( req.params, data[0], function(err, tile){
           if ( req.params.format == 'png'){
             res.sendfile( tile );
           } else {
@@ -90,7 +91,7 @@ var Controller = extend({
       }
     };
 
-      var file = config.data_dir + 'tiles/';
+      var file = Climate.cacheDir() + 'tiles/';
         file += type + '/' + req.params.format;
         file += '/' + req.params.z + '/' + req.params.x + '/' + req.params.y + '.' + req.params.format;
      
@@ -99,9 +100,10 @@ var Controller = extend({
       } else {
         Climate.find( type, req.query, _send );
       }
-  }
+  };
 
+  return this;
 
-}, BaseController);
+};
 
 module.exports = Controller;
