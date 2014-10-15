@@ -1,4 +1,4 @@
-
+var BaseController = require('koop-server/lib/BaseController.js')
 var fs = require('fs');
 
 var sm = require('sphericalmercator'),
@@ -10,11 +10,14 @@ var sm = require('sphericalmercator'),
 //  - Climate, the provider model that is passed in via the koop-server/index.js:register method
 var Controller = function( Climate ){
 
-  this.list = function(req, res){
+  var controller = {};
+  controller.__proto__ = BaseController();
+
+  controller.list = function(req, res){
     res.json( { types: ['temperature']} );
   };
 
-  this.find = function(req, res){
+  controller.find = function(req, res){
     Climate.find(req.params.type, req.query, function(err, data){
       if (err) {
         res.send( err, 404);
@@ -24,7 +27,7 @@ var Controller = function( Climate ){
     });
   };
 
-  this.featureserver = function( req, res ){
+  controller.featureserver = function( req, res ){
     var callback = req.query.callback;
     delete req.query.callback;
 
@@ -34,12 +37,12 @@ var Controller = function( Climate ){
       } else {
         // Get the item 
         // pass to the shared logic for FeatureService routing
-        BaseController._processFeatureServer( req, res, err, geojson, callback);
+        controller.processFeatureServer( req, res, err, geojson, callback);
       }
     });
   };
 
-  this.tiles = function( req, res ){
+  controller.tiles = function( req, res ){
     var callback = req.query.callback;
     delete req.query.callback;
     
@@ -50,7 +53,7 @@ var Controller = function( Climate ){
         if (req.query.style){
           req.params.style = req.query.style;
         }
-        Climate.getTile( req.params, data[0], function(err, tile){
+        Climate.tileGet( req.params, data[0], function(err, tile){
           if ( req.params.format == 'png'){
             res.sendfile( tile );
           } else {
@@ -102,7 +105,7 @@ var Controller = function( Climate ){
       }
   };
 
-  return this;
+  return controller;
 
 };
 

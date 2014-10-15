@@ -1,12 +1,15 @@
-var _ = require('lodash');
-
-var sm = require('sphericalmercator'),
+var _ = require('lodash'),
+  BaseModel = require('koop-server/lib/BaseModel.js'),
+  sm = require('sphericalmercator'),
   merc = new sm({size:256});
 
 var Climate = function( koop ){
 
+  var climate = {};
+  climate.__proto__ = BaseModel( koop );
+
   // get service by id, no id == return all
-  this.find = function( type, options, callback ){
+  climate.find = function( type, options, callback ){
     var select = 'select feature from gfs_' + type;
 
     if ( options.geometry ){
@@ -44,15 +47,7 @@ var Climate = function( koop ){
     });
   };
 
-  this.getTile = function( params, data, callback ){
-    koop.Tiles.get( params, data, callback );
-  };
-
-  this.cacheDir = function(){
-    return koop.Cache.data_dir;
-  };
-
-  return this;
+  return climate;
 };
 
 module.exports = Climate;
