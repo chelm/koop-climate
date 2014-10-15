@@ -1,5 +1,4 @@
-var _ = require('lodash'),
-  BaseModel = require('koop-server/lib/BaseModel.js'),
+var BaseModel = require('koop-server/lib/BaseModel.js'),
   sm = require('sphericalmercator'),
   merc = new sm({size:256});
 
