@@ -1,5 +1,6 @@
 var BaseModel = require('koop-server/lib/BaseModel.js'),
   sm = require('sphericalmercator'),
+  _ = require('lodash'),
   merc = new sm({size:256});
 
 var Climate = function( koop ){

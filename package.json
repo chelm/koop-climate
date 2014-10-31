@@ -14,7 +14,8 @@
     "koop-server": "*",
     "config": "~0.4.35",
     "ejs": "~1.0.0",
-    "sphericalmercator": "~1.0.2"
+    "sphericalmercator": "~1.0.2",
+    "lodash": "~2.4.1"
   },
   "author": "Chris Helm",
   "license": "BSD-2-Clause",
