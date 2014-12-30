@@ -1,4 +1,3 @@
-var BaseController = require('koop-server/lib/BaseController.js')
 var fs = require('fs');
 
 var sm = require('sphericalmercator'),
@@ -8,7 +7,7 @@ var sm = require('sphericalmercator'),
 // params: 
 //  - koop, an instance of koop for access to shared code
 //  - Climate, the provider model that is passed in via the koop-server/index.js:register method
-var Controller = function( Climate ){
+var Controller = function( Climate, BaseController ){
 
   var controller = {};
   controller.__proto__ = BaseController();

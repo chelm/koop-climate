@@ -1,12 +1,11 @@
-var BaseModel = require('koop-server/lib/BaseModel.js'),
-  sm = require('sphericalmercator'),
+var sm = require('sphericalmercator'),
   _ = require('lodash'),
   merc = new sm({size:256});
 
 var Climate = function( koop ){
 
   var climate = {};
-  climate.__proto__ = BaseModel( koop );
+  climate.__proto__ = koop.BaseModel( koop );
 
   // get service by id, no id == return all
   climate.find = function( type, options, callback ){
